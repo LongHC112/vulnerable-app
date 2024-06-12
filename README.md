@@ -17,3 +17,4 @@ You can run the application locally with the following command:
 WoW
 ưqawaad
 ádas
+sa
