@@ -15,3 +15,4 @@ The repository contains a packaged version of the application as the file vulnap
 You can run the application locally with the following command: 
 <p><code>java -jar vulnapp-0.0.1-SNAPSHOT.jar</code></p>
 testokesa
+áda
