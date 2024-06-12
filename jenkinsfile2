@@ -13,7 +13,7 @@ pipeline {
         stage('Build Jobs'){
             steps{
                 script{
-                    sh "java -jar vulnapp-0.0.1-SNAPSHOT.jar --server.port=6060 &"                
+                    sh "java -jar vulnapp-0.0.1-SNAPSHOT.jar --server.port=6060"                
                 }
             }
         }
