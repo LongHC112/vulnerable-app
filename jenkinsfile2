@@ -8,22 +8,19 @@ pipeline {
         AUTH_SCRIPT = 'Long'
         REPORT_FILE = 'authen_report.html'
     }
-    
+
     stages {
         stage('Build Jobs') {
             steps {
                 script {
-                    // Kiểm tra xem tệp .jar có tồn tại không
-                    sh "ls -l vulnapp-0.0.1-SNAPSHOT.jar"
+                    // Start the vulnerable application in the background using nohup
+                    sh "nohup java -jar vulnapp-0.0.1-SNAPSHOT.jar --server.port=6060 > app.log 2>&1 & disown"
 
-                    // Thử khởi chạy ứng dụng và ghi log ra file
-                    sh "nohup java -jar vulnapp-0.0.1-SNAPSHOT.jar --server.port=6060 > app.log 2>&1 &"
-
-                    // Chờ để ứng dụng khởi động
+                    // Wait for the application to start
                     sh "sleep 30s"
 
-                    // Kiểm tra xem ứng dụng có chạy không bằng cách kiểm tra log
-                    sh "cat app.log"
+                    // Check if the application is running
+                    sh "ps -ef | grep 'vulnapp-0.0.1-SNAPSHOT.jar'"
                 }
             }
         }
@@ -31,10 +28,10 @@ pipeline {
         stage('Initialize Environment') {
             steps {
                 script {
-                    // Chờ thêm một chút để ứng dụng hoàn toàn khởi động
+                    // Wait additional time for the application to be fully initialized
                     sh "sleep 30s"
                     
-                    // Kiểm tra nếu server có thể truy cập được
+                    // Check if the server is reachable
                     script {
                         def serverReachable = sh(script: "curl -s -o /dev/null -w '%{http_code}' http://192.168.23.135:6060/register", returnStatus: true)
                         if (serverReachable != 200) {
@@ -42,10 +39,10 @@ pipeline {
                         }
                     }
 
-                    // Đăng ký người dùng
+                    // Register a user
                     sh 'curl -X POST "http://192.168.23.135:6060/register" -d "email=Long" -d "password=Long" -d "fullName=Long"'
 
-                    // Pull Docker image của ZAP
+                    // Pull the ZAP Docker image
                     sh "docker pull ${ZAP_DOCKER_IMAGE}"
                 }
             }
@@ -55,13 +52,13 @@ pipeline {
             steps {
                 script {
                     try {
-                        // Chạy full scan ZAP trong Docker
+                        // Run the ZAP full scan in Docker
                         sh """
                         docker run -v /home/kali/Desktop:/zap/wrk/:rw -t ${ZAP_DOCKER_IMAGE} \
                         zap-full-scan.py -t ${TARGET_URL} -r ${REPORT_FILE}
                         """
                     } catch (Exception e) {
-                        // Xử lý ngoại lệ
+                        // Handle exceptions
                         echo "ZAP scan failed: ${e.message}"
                     }
                 }
@@ -71,7 +68,7 @@ pipeline {
         stage('Find Path') {
             steps {
                 script {
-                    // In đường dẫn hiện tại
+                    // Print the current working directory
                     sh "pwd"
                 }
             }
@@ -80,7 +77,7 @@ pipeline {
         stage('Archive ZAP Report') {
             steps {
                 script {
-                    // Lưu báo cáo của ZAP vào Jenkins
+                    // Archive the ZAP report in Jenkins
                     archiveArtifacts artifacts: "${REPORT_FILE}", allowEmptyArchive: true
                 }
             }
@@ -89,7 +86,7 @@ pipeline {
 
     post {
         always {
-            // Dọn dẹp sau khi hoàn thành
+            // Clean up actions, such as removing temporary files
             cleanWs()
         }
     }
