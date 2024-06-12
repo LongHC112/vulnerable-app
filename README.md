@@ -1,4 +1,4 @@
-áThis application is written in Java and uses Spring Boot. It requires Java 11 or higher.
+ádáThis application is written in Java and uses Spring Boot. It requires Java 11 or higher.
 It is a very small application and was created to demo some application security testing tools.
 The application consists of a register, login and post page.
 
@@ -16,5 +16,5 @@ You can run the application locally with the following command:
 <p><code>java -jar vulnapp-0.0.1-SNAPSHOT.jar</code></p>
 WoW
 ưqawaadsa
-ádas
+ádasads
 sasadasd
