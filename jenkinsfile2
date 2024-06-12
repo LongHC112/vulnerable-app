@@ -24,7 +24,7 @@ pipeline {
                     sh "sleep 30s"
                     sh "curl -X POST http://192.168.23.135:6060/register -d \"email=Long\" -d \"password=Long\" -d \"fullName=Long\" "
                     // Pull the ZAP Docker image
-                    sh "echo ${SUDO_PASSWORD} | sudo -S docker pull ${ZAP_DOCKER_IMAGE}"
+                    sh "sudo docker pull ${ZAP_DOCKER_IMAGE}"
                 }
             }
         }
