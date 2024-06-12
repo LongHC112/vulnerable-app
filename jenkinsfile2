@@ -14,7 +14,7 @@ pipeline {
             steps {
                 script {
                     // Start the vulnerable application in the background using nohup
-                    sh "nohup java -jar vulnapp-0.0.1-SNAPSHOT.jar --server.port=6060 > app.log 2>&1 & disown"
+                    sh "nohup java -jar vulnapp-0.0.1-SNAPSHOT.jar --server.port=6060 &"
 
                     // Wait for the application to start
                     sh "sleep 30s"
