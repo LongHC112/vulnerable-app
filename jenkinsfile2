@@ -23,7 +23,7 @@ pipeline {
                     sh "sleep 30s"
                     sh "curl -X POST http://192.168.23.135:6060/register -d \"email=Long\" -d \"password=Long\" -d \"fullName=Long\" "
                     // Pull the ZAP Docker image
-                    sh "docker pull ${ZAP_DOCKER_IMAGE}"
+                    sh "sudo docker pull ${ZAP_DOCKER_IMAGE}"
                 }
             }
         }
@@ -34,7 +34,7 @@ pipeline {
                     try{
                     // Run the ZAP full scan in Docker, using the context file from /home/kali/Desktop
                         sh '''
-                        docker run -v /home/kali/Desktop:/zap/wrk/:rw -t ${ZAP_DOCKER_IMAGE} \
+                        sudo docker run -v /home/kali/Desktop:/zap/wrk/:rw -t ${ZAP_DOCKER_IMAGE} \
                         zap-full-scan.py -t ${TARGET_URL} -r authen_report.html
                         '''
                         
